@@ -1,5 +1,5 @@
 from django.db import models
-
+from decimal import Decimal
 class ProductStatusType(models.IntegerChoices):
     publish = 1, "نمایش"
     draft = 2, "عدم نمایش"
@@ -22,6 +22,7 @@ class ProductModel(models.Model):
     slug = models.SlugField(max_length=200, allow_unicode=True)
     image = models.ImageField(default="default/product-image.jpg", upload_to="product/img/")
     description = models.TextField()
+    brief_description = models.TextField(null=True,blank=True)
     status = models.IntegerField(choices=ProductStatusType.choices, default=ProductStatusType.draft.value)
     stock = models.PositiveIntegerField(default=0)
     price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
@@ -32,6 +33,11 @@ class ProductModel(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_show_price(self):
+        discount_amount = self.price * Decimal(self.discount_percent / 100)
+        discounted_amount = self.price - discount_amount
+        return '{:,}'.format(round(discounted_amount))
 
 class ProductImageModel(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)

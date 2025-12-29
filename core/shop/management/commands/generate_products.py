@@ -14,7 +14,7 @@ class Command(BaseCommand):
     help = 'Generate fake products'
 
     def handle(self, *args, **options):
-        fake = Faker()
+        fake = Faker(locale="fa_IR")
         user = User.objects.get(type=UserType.superuser.value)
         # List of images
         image_list = [
@@ -34,12 +34,13 @@ class Command(BaseCommand):
         for _ in range(10):  # Generate 10 fake products
             user = user
             num_categories = random.randint(1, 4)
-            selected_categoreis = random.sample(list(categories), num_categories)
-            title = fake.word()
+            selected_categories = random.sample(list(categories), num_categories)
+            title = ' '.join([fake.word() for _ in range(1,3)])
             slug = slugify(title, allow_unicode=True)
             selected_image = random.choice(image_list)
             image_obj = File(file=open(BASE_DIR / selected_image, "rb"), name=Path(selected_image).name)
-            description = fake.text()
+            description = fake.paragraph(nb_sentences=10)
+            brief_description = fake.paragraph(nb_sentences=1)
             stock = fake.random_int(min=0, max=10)
             status = random.choice(ProductStatusType.choices)[0]  # Replace with your actual status choices
             price = fake.random_int(min=10000, max=100000)
@@ -51,11 +52,12 @@ class Command(BaseCommand):
                 slug=slug,
                 image=image_obj,
                 description=description,
+                brief_description=brief_description,
                 stock=stock,
                 status=status,
                 price=price,
                 discount_percent=discount_percent,
             )
-            product.category.set(selected_categoreis)
+            product.category.set(selected_categories)
 
         self.stdout.write(self.style.SUCCESS('Successfully generated 10 fake products'))

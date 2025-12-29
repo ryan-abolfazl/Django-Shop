@@ -6,7 +6,7 @@ from django.utils.text import slugify
 class Command(BaseCommand):
     help = 'generates fake categories'
     def handle(self, *args, **options):
-        faker = Faker()
+        faker = Faker(locale="fa_IR")
 
         for _ in range(10):
             title = faker.word()
