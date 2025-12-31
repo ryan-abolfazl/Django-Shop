@@ -39,6 +39,12 @@ class ProductModel(models.Model):
         discounted_amount = self.price - discount_amount
         return '{:,}'.format(round(discounted_amount))
 
+    def get_show_raw_price(self):
+        return '{:,}'.format(self.price)
+
+    def is_discounted(self):
+        return self.discount_percent != 0
+
 class ProductImageModel(models.Model):
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     file = models.ImageField(upload_to="product/extra-img/")
