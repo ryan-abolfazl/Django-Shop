@@ -3,5 +3,5 @@ from . import views
 
 app_name = 'cart'
 urlpatterns = [
-    # path('product/grid/', views.ProductGridView.as_view(), name='product-grid'),
+        path("session/add-product/", views.SessionAddProduct.as_view(), name="session-add-product"),
     ]

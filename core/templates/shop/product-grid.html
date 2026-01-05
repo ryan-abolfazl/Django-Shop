@@ -107,8 +107,10 @@
                             </div>
                         </div>
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-outline-primary btn-transition mb-3">اعمال فیلتر</button>
-                            <a href="{% url 'shop:product-grid' %}" class="btn btn-outline-danger btn-transition mb-3">حذف فیلتر ها</a>
+                            <button type="submit" class="btn btn-outline-primary btn-transition mb-3">اعمال
+                                فیلتر</button>
+                            <a href="{% url 'shop:product-grid' %}"
+                                class="btn btn-outline-danger btn-transition mb-3">حذف فیلتر ها</a>
                         </div>
                     </form>
                 </div>
@@ -228,7 +230,7 @@
                             <!-- End Rating -->
 
                             <button type="button"
-                                class="btn btn-outline-primary btn-sm btn-transition rounded-pill">افزودن به سبد
+                                class="btn btn-outline-primary btn-sm btn-transition rounded-pill" onclick="addToCart('{{object.id}}')">افزودن به سبد
                                 خرید</button>
                         </div>
                     </div>
@@ -399,5 +401,26 @@
         window.location.href = new_url
     }
 </script>
+<script>
+    function addToCart(product_id) {
+        console.log(product_id)
+        $.ajax({
+            url: "{%  url 'cart:session-add-product' %}",
+            method: 'POST',
+            data: {
+                product_id: product_id,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
 
+            },
+            success: function (response) {
+                console.log(response);
+                // do something with the response data
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(errorThrown);
+                // handle the error case
+            }
+        });
+    }
+</script>
 {% endblock %}
