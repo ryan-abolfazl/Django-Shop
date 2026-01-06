@@ -33,6 +33,6 @@ class CartSession:
         for item in self._cart["items"]:
             total_quantity += item["quantity"]
         return total_quantity
-    
+
     def save(self):
         self.session.modified = True
