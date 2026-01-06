@@ -21,7 +21,7 @@ class CartSession:
 
     def get_cart_dict(self):
         return self._cart
-    
+
     def clear(self):
         self._cart = self.session["cart"] = {
             "items":[],
