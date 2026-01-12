@@ -78,6 +78,10 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def get_fullname(self):
+        if self.first_name or self.last_name:
+            return f'{self.first_name} {self.last_name}'
+        return "کاربر جدید"
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

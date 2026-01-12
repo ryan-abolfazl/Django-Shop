@@ -12,7 +12,7 @@
 
             </div>
 
-            <h4 class="card-title mb-0">{{request.user.user_profile.name}}</h4>
+            <h4 class="card-title mb-0">{{request.user.user_profile.get_fullname}}</h4>
             <p class="card-text small">{{request.user.email}}</p>
           </div>
           <!-- End Avatar -->
