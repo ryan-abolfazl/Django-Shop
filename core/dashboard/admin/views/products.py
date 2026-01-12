@@ -13,8 +13,11 @@ from django.views.generic import (
     ListView,
     DetailView,
 )
+from ..forms import ProductForm
 
 from shop.models import ProductModel, ProductStatusType, ProductCategoryModel
+
+
 class AdminProductListView(LoginRequiredMixin, HasAdminAccessPermission, ListView):
     template_name = 'dashboard/admin/products/product-list.html'
     paginate_by = 10
@@ -51,6 +54,11 @@ class AdminProductListView(LoginRequiredMixin, HasAdminAccessPermission, ListVie
 
 
 
-# class AdminProductDetailView(DetailView):
-#     template_name = 'shop/product-detail.html'
-#     queryset = ProductModel.objects.filter(status=ProductStatusType.publish.value)
+class AdminProductUpdateView(LoginRequiredMixin, HasAdminAccessPermission, UpdateView):
+    template_name = 'dashboard/admin/products/product-edit.html'
+    queryset = ProductModel.objects.all()
+    form_class = ProductForm
+    success_message = "ویرایش محصول با موفقیت انجام شد"
+
+    def get_success_url(self):
+        return reverse_lazy("dashboard:admin:product-edit", kwargs={"pk":self.get_object().pk})
