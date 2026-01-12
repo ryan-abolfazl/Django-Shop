@@ -22,3 +22,15 @@ class ProductForm(forms.ModelForm):
         "discount_percent",
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["category"].widget.attrs["class"] = 'form-control'
+        self.fields["title"].widget.attrs["class"] = 'form-control'
+        self.fields["slug"].widget.attrs["class"] = 'form-control'
+        self.fields["image"].widget.attrs["class"] = 'form-control'
+        self.fields["description"].widget.attrs["class"] = 'form-control'
+        self.fields["brief_description"].widget.attrs["class"] = 'form-control'
+        self.fields["status"].widget.attrs["class"] = 'selected'
+        self.fields["stock"].widget.attrs["class"] = 'number'
+        self.fields["price"].widget.attrs["class"] = 'form-control'
+        self.fields["discount_percent"].widget.attrs["class"] = 'form-control'
