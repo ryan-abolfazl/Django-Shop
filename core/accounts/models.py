@@ -54,7 +54,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
     type = models.IntegerField(
-        choices=UserType.choices, default=UserType.customer.value)
+        choices=UserType.choices,
+        default=UserType.customer.value)
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
@@ -68,7 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_profile")
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=12, validators=[validate_iranian_cellphone_number])
@@ -80,6 +81,6 @@ class Profile(models.Model):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created and instance.type == UserType.customer.value:
+    if created:
         Profile.objects.create(user=instance, pk=instance.pk)
 
