@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import View, TemplateView, UpdateView
+from django.views.generic import UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from dashboard.permissions import HasAdminAccessPermission
 from django.contrib.auth import views as auth_views
@@ -11,8 +11,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 
 
-class AdminDashboardHomeView(LoginRequiredMixin, HasAdminAccessPermission, TemplateView):
-    template_name = "dashboard/admin/home.html"
+
 
 
 class AdminSecurityEditView(LoginRequiredMixin, HasAdminAccessPermission,SuccessMessageMixin, auth_views.PasswordChangeView):
