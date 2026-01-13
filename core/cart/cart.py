@@ -52,3 +52,9 @@ class CartSession:
 
     def save(self):
         self.session.modified = True
+
+    def sync_cart_items_from_db(self):
+        pass
+
+    def merge_cart_session_in_db(self):
+        pass
