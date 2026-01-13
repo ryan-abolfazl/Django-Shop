@@ -2,14 +2,17 @@ from django.shortcuts import render
 from django.views.generic import View, TemplateView
 from django.http import HttpResponse, JsonResponse
 from .cart import CartSession
+from shop.models import ProductModel, ProductStatusType
 from typing import Any
 class SessionAddProductView(View):
 
     def post(self, request, *args, **kwargs):
         cart = CartSession(request.session)
         product_id = request.POST.get("product_id")
-        if product_id:
+        if product_id and ProductModel.objects.filter(id=product_id, status=ProductStatusType.publish.value).exists():
             cart.add_product(product_id)
+        if request.user.is_authenticated:
+            cart.merge_cart_session_in_db(request.user)
         return JsonResponse({"cart":cart.get_cart_dict(),"total_quantity":cart.get_total_quantity()})
 
 class SessionRemoveProductView(View):
@@ -19,6 +22,8 @@ class SessionRemoveProductView(View):
         product_id = request.POST.get("product_id")
         if product_id:
             cart.remove_product(product_id)
+        if request.user.is_authenticated:
+            cart.merge_cart_session_in_db(request.user)
         return JsonResponse({"cart":cart.get_cart_dict(),"total_quantity":cart.get_total_quantity()})
 
 class SessionUpdateProductQuantityView(View):
@@ -29,6 +34,8 @@ class SessionUpdateProductQuantityView(View):
         quantity = int(request.POST.get("quantity"))
         if product_id and quantity:
             cart.update_product_quantity(product_id, quantity)
+        if request.user.is_authenticated:
+            cart.merge_cart_session_in_db(request.user)
         return JsonResponse({"cart":cart.get_cart_dict(),"total_quantity":cart.get_total_quantity()})
 
 class SessionCartSummaryView(TemplateView):
