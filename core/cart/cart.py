@@ -1,5 +1,6 @@
 from shop.models import ProductStatusType, ProductModel
 from .models import CartModel, CartItemModel
+
 class CartSession:
     def __init__(self,session):
         self.session = session
@@ -55,9 +56,20 @@ class CartSession:
 
     def sync_cart_items_from_db(self, user):
         cart,created = CartModel.objects.get_or_create(user=user)
-        cart_item = CartItemModel.objects.filter(cart=cart)
+        cart_items = CartItemModel.objects.filter(cart=cart)
+        for cart_item in cart_items:
+            for item in self._cart["items"]:
+                if str(cart_item.product_id) == item["product_id"]:
+                    cart_item["quantity"] = item["quantity"]
+                    cart_item.save()
+                    break
+            else:
+                new_item = {"product_id": str(cart_item.product_id), "quantity": cart_item.quantity, }
+                self._cart["items"].append(new_item)
+            self.save()
 
 
-    def merge_cart_session_in_db(self):
+
+    def merge_cart_session_in_db(self, user):
         cart, created = CartModel.objects.get_or_create(user=user)
         cart_item = CartItemModel.objects.filter(cart=cart)
