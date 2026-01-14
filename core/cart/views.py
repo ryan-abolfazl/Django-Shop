@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from .cart import CartSession
 from shop.models import ProductModel, ProductStatusType
 from typing import Any
+
 class SessionAddProductView(View):
 
     def post(self, request, *args, **kwargs):
@@ -38,7 +39,7 @@ class SessionUpdateProductQuantityView(View):
             cart.merge_cart_session_in_db(request.user)
         return JsonResponse({"cart":cart.get_cart_dict(),"total_quantity":cart.get_total_quantity()})
 
-class SessionCartSummaryView(TemplateView):
+class CartSummaryView(TemplateView):
     template_name = "cart/cart-summary.html"
 
     def get_context_data(self, **kwargs:Any):

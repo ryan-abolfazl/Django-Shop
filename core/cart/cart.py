@@ -76,7 +76,7 @@ class CartSession:
 
         for item in self._cart["items"]:
             product_obj = ProductModel.objects.get(id=item["product_id"], status=ProductStatusType.publish.value)
-            cart_item, created = CartItemModel.objects.get_or_create(user=user, product=product_obj)
+            cart_item, created = CartItemModel.objects.get_or_create(cart=cart, product=product_obj)
             cart_item.quantity = item["quantity"]
             cart_item.save()
             session_product_ids = [item["product_id"] for item in self._cart["items"]]
