@@ -8,6 +8,8 @@ from .models import UserAddressModel
 from cart.models import CartModel
 from .forms import CheckOutForm
 from django.urls import reverse_lazy
+from order.models import OrderModel, OrderItemModel
+from cart.cart import CartSession
 class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormView):
     template_name = 'order/checkout.html'
     form_class = CheckOutForm
@@ -20,16 +22,45 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         return kwargs
     
     def form_valid(self, form):
-        # user = self.request.user
+        user = self.request.user
         cleaned_data = form.cleaned_data
         address = cleaned_data['address_id']
 
-        # cart = CartModel.objects.get(user=user)
+        cart = CartModel.objects.get(user=user)
+        order = self.create_order(address)
+
+        self.create_order_items(order, cart)
+        self.clear_cart(cart)
+
+        total_price = order.calculate_total_price()
+        order.save()
         return super().form_valid(form)
     
     def form_invalid(self, form):
         return super().form_invalid(form)
-    
+
+    def create_order(self, address):
+        return OrderModel.objects.create(
+            user=self.request.user,
+            address=address.address,
+            state=address.state,
+            city=address.city,
+            zip_code=address.zip_code,
+        )
+
+    def create_order_items(self, order, cart):
+        for item in cart.cart_items.all():
+            OrderItemModel.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.get_price(),
+            )
+
+    def clear_cart(self, cart):
+        cart.cart_items.all().delete()
+        CartSession(self.request.session).clear()
+
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
         cart = CartModel.objects.get(user=self.request.user)
@@ -41,6 +72,4 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     
 class OrderCompletedView(LoginRequiredMixin, HasCustomerAccessPermission, TemplateView):
     template_name = 'order/completed.html'
-
-
     
