@@ -1,15 +1,35 @@
 from django.views.generic import (
     TemplateView,
+    FormView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .permissions import HasCustomerAccessPermission
 from .models import UserAddressModel
 from cart.models import CartModel
 from .forms import CheckOutForm
-class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, TemplateView):
+from django.urls import reverse_lazy
+class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormView):
     template_name = 'order/checkout.html'
     form_class = CheckOutForm
+    success_url = reverse_lazy("order:completed")
 
+
+    def get_form_kwargs(self):
+        kwargs = super(OrderCheckoutView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+    
+    def form_valid(self, form):
+        # user = self.request.user
+        cleaned_data = form.cleaned_data
+        address = cleaned_data['address_id']
+
+        # cart = CartModel.objects.get(user=user)
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        return super().form_invalid(form)
+    
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
         cart = CartModel.objects.get(user=self.request.user)
@@ -18,4 +38,9 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, Templat
         context["total_price"] = total_price
         context["total_tax"] = round((total_price * 12)/100)
         return context
+    
+class OrderCompletedView(LoginRequiredMixin, HasCustomerAccessPermission, TemplateView):
+    template_name = 'order/completed.html'
+
+
     
