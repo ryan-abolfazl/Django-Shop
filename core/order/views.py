@@ -10,6 +10,9 @@ from .forms import CheckOutForm
 from django.urls import reverse_lazy
 from order.models import OrderModel, OrderItemModel
 from cart.cart import CartSession
+from decimal import Decimal
+
+
 class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormView):
     template_name = 'order/checkout.html'
     form_class = CheckOutForm
@@ -25,6 +28,7 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         user = self.request.user
         cleaned_data = form.cleaned_data
         address = cleaned_data['address_id']
+        coupon = cleaned_data['coupon']
 
         cart = CartModel.objects.get(user=user)
         order = self.create_order(address)
@@ -33,6 +37,7 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         self.clear_cart(cart)
 
         total_price = order.calculate_total_price()
+        self.apply_coupon(coupon, order, user, total_price)
         order.save()
         return super().form_valid(form)
     
@@ -61,6 +66,18 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         cart.cart_items.all().delete()
         CartSession(self.request.session).clear()
 
+    def apply_coupon(self, coupon, order, user, total_price):
+        if coupon:
+            discount_amount = round(
+                (total_price * Decimal(coupon.discount_percent / 100)))
+            total_price -= discount_amount
+
+            order.coupon = coupon
+            coupon.used_by.add(user)
+            coupon.save()
+
+        order.total_price = total_price
+
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
         cart = CartModel.objects.get(user=self.request.user)
@@ -72,4 +89,3 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
     
 class OrderCompletedView(LoginRequiredMixin, HasCustomerAccessPermission, TemplateView):
     template_name = 'order/completed.html'
-    

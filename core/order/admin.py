@@ -38,7 +38,7 @@ class UserAddressModelAdmin(admin.ModelAdmin):
 class CouponModelAdmin(admin.ModelAdmin):
     list_display = (
         "code",
-        "discount_pecent",
+        "discount_percent",
         "max_limit_usage",
         "used_by_count",
         "expiration_date",
