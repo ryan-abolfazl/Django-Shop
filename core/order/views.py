@@ -14,7 +14,9 @@ from cart.cart import CartSession
 from decimal import Decimal
 from django.http import JsonResponse
 from time import timezone
-
+from django.shortcuts import redirect
+from payment.models import PaymentModel
+from payment.zarinpal_client import ZarinPalSandbox
 
 class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormView):
     template_name = 'order/checkout.html'
@@ -42,7 +44,20 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
         total_price = order.calculate_total_price()
         self.apply_coupon(coupon, order, user, total_price)
         order.save()
-        return super().form_valid(form)
+        return redirect(self.create_payment_url(order))
+
+    def create_payment_url(self, order):
+        zarinpal = ZarinPalSandbox()
+        response = zarinpal.payment_request(order.get_price())
+        data = response.get("data")
+        authority = data["authority"]
+        payment_obj = PaymentModel.objects.create(
+            authority_id=authority,
+            amount=order.get_price(),
+        )
+        order.payment = payment_obj
+        order.save()
+        return zarinpal.generate_payment_url(authority)
     
     def form_invalid(self, form):
         return super().form_invalid(form)
