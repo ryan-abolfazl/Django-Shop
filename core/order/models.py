@@ -35,6 +35,7 @@ class CouponModel(models.Model):
 
 class OrderModel(models.Model):
     user = models.ForeignKey('accounts.User', on_delete=models.PROTECT)
+    payment = models.ForeignKey('payment.PaymentModel', on_delete=models.SET_NULL, null=True, blank=True)
 
 
     #order address
