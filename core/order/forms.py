@@ -25,7 +25,8 @@ class CheckOutForm(forms.Form):
     
     def clean_coupon(self):
         code = self.cleaned_data.get('coupon')
-
+        if code == "":
+            return None
         # Check if the address_id belongs to the requested user
         user = self.request.user  # Assuming the user is available in the request object
         coupon = None
