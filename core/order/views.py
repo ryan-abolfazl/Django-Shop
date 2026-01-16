@@ -110,20 +110,20 @@ class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
             return JsonResponse({"message": "کد تخفیف یافت نشد"}, status=404)
         else:
             if coupon.used_by.count() >= coupon.max_limit_usage:
-                is_valid, message = False, "محدودیت در تعداد استفاده"
+                status_code, message = 403, "محدودیت در تعداد استفاده"
 
-            if coupon.expiration_date and coupon.expiration_date < timezone.now():
-                is_valid, message = False, "کد تخفیف منقضی شده است"
+            elif coupon.expiration_date and coupon.expiration_date < timezone.now():
+                status_code, message = 403, "کد تخفیف منقضی شده است"
 
-            if user in coupon.used_by.all():
-                is_valid, message = False, "این کد تخفیف قبلا توسط شما استفاده شده است"
+            elif user in coupon.used_by.all():
+                status_code, message = 403, "این کد تخفیف قبلا توسط شما استفاده شده است"
 
-            # else:
-            #     cart = CartModel.objects.get(user=self.request.user)
+            else:
+                cart = CartModel.objects.get(user=self.request.user)
 
-            #     total_price = cart.calculate_total_price()
-            #     total_price = round(
-            #         total_price - (total_price * (coupon.discount_percent/100)))
-            #     total_tax = round((total_price * 9)/100)
-        return JsonResponse({"is_valid": is_valid, "message": message})
+                total_price = cart.calculate_total_price()
+                total_price = round(
+                    total_price - (total_price * (coupon.discount_percent/100)))
+                total_tax = round((total_price * 9)/100)
+        return JsonResponse({"message": message, "total_price":total_price, "total_tax":total_tax}, status=status_code)
 

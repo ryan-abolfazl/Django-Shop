@@ -140,13 +140,13 @@
 
 {% block extra_js %}
 <script>
-    {% comment %} function applyDiscount(total_price,total_tax){
+    function applyDiscount(total_price,total_tax){
         $("#total-price").html(total_price)
         $("#total-tax").html(total_tax)
 
         formatPriceInToman(document.getElementById("total-price"))
         formatPriceInToman(document.getElementById("total-tax"))
-    } {% endcomment %}
+    }
 
     function validateCoupon(){
         $.ajax({
