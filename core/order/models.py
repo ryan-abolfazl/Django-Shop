@@ -4,10 +4,9 @@ from decimal import Decimal
 
 class OrderStatusType(models.IntegerChoices):
     pending = 1, "در انتظار پرداخت"
-    proccessing = 2, "درحال پردازش"
-    shipped = 3, "ارسال شده"
-    delivered = 4, "تحویل شده"
-    canceled = 5, "لغو شده"
+    success = 2, "پرداخت موفقیت آمیز"
+    failed = 3, "پرداخت لغو شده"
+
 
 class UserAddressModel(models.Model):
     user = models.ForeignKey('accounts.User',on_delete=models.CASCADE)

@@ -108,6 +108,11 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
 class OrderCompletedView(LoginRequiredMixin, HasCustomerAccessPermission, TemplateView):
     template_name = 'order/completed.html'
 
+
+class OrderFailedView(LoginRequiredMixin, HasCustomerAccessPermission, TemplateView):
+    template_name = 'order/failed.html'
+
+
 class ValidateCouponView(LoginRequiredMixin, HasCustomerAccessPermission, View):
 
     def post(self, request, *args, **kwargs):
