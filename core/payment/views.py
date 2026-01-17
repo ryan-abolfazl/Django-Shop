@@ -20,13 +20,17 @@ class PaymentVerifyView(View):
         zarin_pal = ZarinPalSandbox() 
         response = zarin_pal.payment_verify(
             int(payment_obj.amount), payment_obj.authority_id)
-        ref_id = response["data"]["ref_id"]
-        status_code = response["data"]["code"]
+        
+        if status == "OK":
+            status_code = response["data"]["code"]
+            ref_id = response["data"]["ref_id"]
+            payment_obj.ref_id = ref_id
+            payment_obj.status = PaymentStatusType.success.value
+        else:
+            status_code = response["errors"]["code"]
+            payment_obj.status = PaymentStatusType.failed.value
 
-        payment_obj.ref_id = ref_id
         payment_obj.response_code = status_code
-        payment_obj.status = PaymentStatusType.success.value if status_code in {
-            100, 101} else PaymentStatusType.failed.value
         payment_obj.response_json = response
         payment_obj.save()
 
