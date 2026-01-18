@@ -29,7 +29,7 @@ class CustomerProfileEditView(LoginRequiredMixin, HasCustomerAccessPermission,Su
         return Profile.objects.get(user=self.request.user)
 
 class CustomerProfileImageEditView(LoginRequiredMixin, HasCustomerAccessPermission,SuccessMessageMixin, UpdateView ):
-    http_method_names = "post"
+    http_method_names = ["post"]
     model = Profile
     fields = [
         "image"

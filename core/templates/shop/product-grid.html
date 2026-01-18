@@ -180,10 +180,12 @@
                             <img class="card-img-top" src="{{object.image.url}}" alt="Image Description">
                             {% if request.user.is_authenticated %}
                             <div class="card-pinned-top-end">
-                                <button type="button" class="btn btn-outline-secondary btn-xs btn-icon rounded-circle"
+                                {% if request.user.is_authenticated %}
+                                <button type="button" class="btn btn-outline-secondary btn-xs btn-icon rounded-circle {% if object.id in wishlist_items %} active {% endif %}"
                                     data-bs-toggle="tooltip" data-bs-placement="top" title="افزودن به علایق">
                                     <i class="bi-heart"></i>
                                 </button>
+                                {% endif %}
                             </div>
                             {% endif %}
                         </div>
