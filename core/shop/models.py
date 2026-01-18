@@ -54,7 +54,7 @@ class ProductModel(models.Model):
         return self.status == ProductStatusType.publish.value
 
 class ProductImageModel(models.Model):
-    user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
     file = models.ImageField(upload_to="product/extra-img/")
 
     created_date = models.DateTimeField(auto_now_add=True)
@@ -62,4 +62,12 @@ class ProductImageModel(models.Model):
 
     class Meta:
         ordering = ["-created_date"]
+
+class WishlistProductModel(models.Model):
+    user = models.ForeignKey("accounts.User", on_delete=models.PROTECT)
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+
+
+    def __str__(self):
+        return self.product.title
 
