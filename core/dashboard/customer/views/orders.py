@@ -52,4 +52,8 @@ class CustomerOrderDetailView(LoginRequiredMixin, HasCustomerAccessPermission, D
     def get_queryset(self):
         queryset = OrderModel.objects.filter(user=self.request.user)
         return queryset
-    
+
+class CustomerOrderInvoiceView(LoginRequiredMixin, HasCustomerAccessPermission, DetailView):
+    template_name = 'dashboard/customer/orders/order-invoice.html'
+    def get_queryset(self):
+        return OrderModel.objects.filter(user=self.request.user, status=OrderStatusType.success.value)    

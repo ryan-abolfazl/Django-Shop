@@ -141,7 +141,7 @@
                                     <div class="d-grid gap-2">
                                         {% if object.is_successful %}
                                         <a class="btn btn-white btn-sm"
-                                            href="#"
+                                            href="{% url 'dashboard:customer:order-invoice' pk=object.pk %}"
                                             target="_blank">
                                             <i class="bi-receipt small me-2"></i> مشاهده فاکتور
                                         </a>

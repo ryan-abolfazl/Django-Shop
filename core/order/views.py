@@ -86,9 +86,9 @@ class OrderCheckoutView(LoginRequiredMixin, HasCustomerAccessPermission, FormVie
 
     def apply_coupon(self, coupon, order, user, total_price):
         if coupon:
-            discount_amount = round(
-                (total_price * Decimal(coupon.discount_percent / 100)))
-            total_price -= discount_amount
+            # discount_amount = round(
+            #     (total_price * Decimal(coupon.discount_percent / 100)))
+            # total_price -= discount_amount
 
             order.coupon = coupon
             coupon.used_by.add(user)
