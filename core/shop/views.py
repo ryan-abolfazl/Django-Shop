@@ -8,6 +8,10 @@ from django.views.generic import (
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import ProductModel, ProductStatusType, ProductCategoryModel, WishlistProductModel
+from review.models import ReviewModel, ReviewStatusType
+
+
+
 class ProductGridView(ListView):
     template_name = 'shop/product-grid.html'
     paginate_by = 9
@@ -51,7 +55,9 @@ class ShopProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
+        product = self.get_object()
         context["is_wished"] = WishlistProductModel.objects.filter(user=self.request.user, product__id=self.get_object().id).exists() if self.request.user.is_authenticated else False
+        context["reviews"] = ReviewModel.objects.filter(product=product, status=ReviewStatusType.accepted.value)
         return context
     
 class AddOrRemoveWishlistView(LoginRequiredMixin, View):

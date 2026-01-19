@@ -18,6 +18,9 @@ class ReviewModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ["-created_date"]
+
     def __str__(self):
         return f'{self.user}  -  {self.product_id}'
 @receiver(post_save, sender=ReviewModel)
