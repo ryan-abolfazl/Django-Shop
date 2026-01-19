@@ -27,6 +27,7 @@ class ProductModel(models.Model):
     stock = models.PositiveIntegerField(default=0)
     price = models.DecimalField(default=0, max_digits=10, decimal_places=2)
     discount_percent = models.DecimalField(max_digits=10, decimal_places=2)
+    avg_rate = models.FloatField(default=0.0)
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
